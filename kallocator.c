@@ -176,40 +176,7 @@ void kfree(void* _ptr) {
 	}
 	
 	//fix contiguous free_blocks (&kallocator.free_blocks, newNode);
-<<<<<<< HEAD
 	fix_contiguous();
-
-=======
-	struct nodeStruct* cur = kallocator.free_blocks;
-	while(cur != NULL){
-		if( (cur->ptr_block + cur->size) == newNode->ptr_block ){
-			
-			replaceNode = List_createNode(cur->ptr_block, cur->size + newNode->size);
-			printf("NEW SIZE: %d\n", replaceNode->size);
-			printf("NEW POINTER: %p\n", replaceNode->ptr_block);
-			
-			List_deleteNode(&kallocator.free_blocks, cur);
-			List_deleteNode(&kallocator.free_blocks, newNode);
-			List_insertTail(&kallocator.free_blocks, replaceNode);
-			
-		}
-		if( (newNode->ptr_block + newNode->size) == cur->ptr_block){
-			
-			replaceNode = List_createNode(newNode->ptr_block, cur->size + newNode->size);
-			printf("NEW SIZE: %d\n", replaceNode->size);
-			printf("NEW POINTER: %p\n", replaceNode->ptr_block);
-			
-			List_deleteNode(&kallocator.free_blocks, cur);
-			List_deleteNode(&kallocator.free_blocks, newNode);
-			List_insertTail(&kallocator.free_blocks, replaceNode);
-		}
-		
-		cur = cur->next;
-	}
-	
-	
-	
->>>>>>> 059d2baf00989474ae091dcc433b0b228b5bcbbf
 }
 
 /* int compact_allocation(void** _before, void** _after) {
@@ -265,10 +232,7 @@ int compact_allocation(void** _before, void** _after) {
 	List_sort(&kallocator.allocated_blocks);
 
 	int i = 0;
-<<<<<<< HEAD
-	
-=======
->>>>>>> 059d2baf00989474ae091dcc433b0b228b5bcbbf
+
 	struct nodeStruct* cur_free = kallocator.free_blocks;
 	while(cur_free != NULL){
 		struct nodeStruct* cur = kallocator.allocated_blocks;
