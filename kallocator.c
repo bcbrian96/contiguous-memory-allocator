@@ -172,8 +172,6 @@ void kfree(void* _ptr) {
 			List_insertTail(&kallocator.free_blocks, replaceNode);
 			
 		}
-		//backwards compatibility???
-		
 		if( (newNode->ptr_block + newNode->size) == cur->ptr_block){
 			
 			replaceNode = List_createNode(newNode->ptr_block, cur->size + newNode->size);
@@ -259,13 +257,14 @@ int compact_allocation(void** _before, void** _after) {
 	//struct nodeStruct* cur = kallocator.allocated_blocks;
 	//struct nodeStruct* cur_free = kallocator.free_blocks;
 	int i = 0;
-	
-	for(struct nodeStruct* cur_free = kallocator.free_blocks; cur_free != NULL; cur_free = cur_free->next){
-		for(struct nodeStruct* cur = kallocator.allocated_blocks; cur != NULL; cur = cur->next){
+	struct nodeStruct* cur_free = kallocator.free_blocks;
+	while(cur_free != NULL){
+		struct nodeStruct* cur = kallocator.allocated_blocks;
+		while(cur != NULL){
 			if(cur->ptr_block >= cur_free->ptr_block){
 				
 				_before[i] = cur->ptr_block;
-				memmove(cur_free->ptr_block, cur->ptr_block, cur->size);
+				memcpy(cur_free->ptr_block, cur->ptr_block, cur->size);
 				cur_free->ptr_block = cur_free->ptr_block + cur->size;
 				cur->ptr_block = cur->ptr_block - cur_free->size;
 				
@@ -275,8 +274,9 @@ int compact_allocation(void** _before, void** _after) {
 				i++;
 				compacted_size++;
 			}
-				
+			cur = cur->next;
 		}
+		cur_free = cur_free->next;
 	}
 	return compacted_size;
 }
