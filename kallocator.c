@@ -62,7 +62,7 @@ void allocate_block(struct nodeStruct* node, int size){
 
 void* kalloc(int _size) {
     void* ptr = NULL;
-    struct nodeStruct* cur = NULL;
+	struct nodeStruct* cur = NULL;
     // Allocate memory from kallocator.memory 
     // ptr = address of allocated memory
 	
@@ -160,7 +160,7 @@ void kfree(void* _ptr) {
 
 	struct nodeStruct* newNode = NULL;
 	
-        printf("Attempting to find pointer %p: \n", _ptr);
+    printf("Attempting to find pointer %p: \n", _ptr);
 	struct nodeStruct* targetNode = List_findNode(kallocator.allocated_blocks, _ptr);
 	
 	if(targetNode != NULL) {
@@ -173,9 +173,9 @@ void kfree(void* _ptr) {
 	else{
 		printf("I cannot find\n");
 	}
-	
-	//fix contiguous free_blocks (&kallocator.free_blocks, newNode);
+
 	fix_contiguous();
+
 }
 
 int compact_allocation(void** _before, void** _after) {
@@ -187,7 +187,7 @@ int compact_allocation(void** _before, void** _after) {
 	List_sort(&kallocator.allocated_blocks);
 
 	int i = 0;
-
+	
 	struct nodeStruct* cur_free = kallocator.free_blocks;
 	while(cur_free != NULL){
 		struct nodeStruct* cur = kallocator.allocated_blocks;
@@ -243,8 +243,6 @@ void print_statistics() {
 	
 	free_size = available_memory();
 	struct nodeStruct* cur_free = kallocator.free_blocks;
-	//smallest_free_chunk_size = cur_free->size;
-	//largest_free_chunk_size = cur_free->size;
 	
 	while(cur_free != NULL){
 		free_chunks++;
