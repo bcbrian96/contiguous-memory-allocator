@@ -46,7 +46,7 @@ void destroy_allocator() {
 
 void allocate_block(struct nodeStruct* node, int size){
 	
-	struct nodeStruct* tmp  = List_createNode(node->ptr_block, size);
+	struct nodeStruct* tmp = List_createNode(node->ptr_block, size);
 	
 	node->ptr_block = node->ptr_block + size; 
 	node->size = node->size - size; 
@@ -62,12 +62,12 @@ void allocate_block(struct nodeStruct* node, int size){
 
 void* kalloc(int _size) {
     void* ptr = NULL;
-
+	struct nodeStruct* cur = NULL;
     // Allocate memory from kallocator.memory 
     // ptr = address of allocated memory
 	
 	if(kallocator.aalgorithm == FIRST_FIT){
-		struct nodeStruct* cur = kallocator.free_blocks; //reference to head
+		cur = kallocator.free_blocks; //reference to head
 		
 		while(cur != NULL){
 			if(cur->size >= _size){
@@ -82,9 +82,9 @@ void* kalloc(int _size) {
 		}
 	}
 	
-	/* else if(kallocator.aalgorithm == BEST_FIT){ //Keeping the free list sorted can speed up the process of finding the right hole.
+	 else if(kallocator.aalgorithm == BEST_FIT){ //Keeping the free list sorted can speed up the process of finding the right hole?
 		
-		struct nodeStruct* cur = kallocator.free_blocks;
+		cur = kallocator.free_blocks;
 		int remainder = 0;
 		int minRemainder = cur->size;
 		struct nodeStruct* tmp = NULL;
@@ -98,51 +98,42 @@ void* kalloc(int _size) {
 					tmp = cur;
 				}
 			}
-			
 			cur = cur->next;
 		}
 		
 		if(tmp != NULL){
-			allocate_block(_size, tmp);
 			ptr = tmp->ptr_block;
-		}
-		else{
-			ptr = NULL;
-		}
-		
+			allocate_block(tmp, _size);
+		}	
 	}
 	
 	else if(kallocator.aalgorithm == WORST_FIT){ //largest remainder
 		
-		struct nodeStruct* cur = kallocator.free_blocks;
-		int remainder = 0;
+		cur = kallocator.free_blocks;
+		int remainder2 = 0;
 		int maxRemainder = -1;
-		struct nodeStruct* tmp = NULL;
+		struct nodeStruct* tmp2 = NULL;
 		
 		while(cur != NULL){
 			if(cur->size >= _size){
-				remainder = cur->size - _size;
+				remainder2 = cur->size - _size;
 				
-				if(remainder > maxRemainder){
-					maxRemainder = remainder;
-					tmp = cur;
+				if(remainder2 > maxRemainder){
+					maxRemainder = remainder2;
+					tmp2 = cur;
 				}
 			}
 			
 			cur = cur->next;
 		}
 		
-		if(tmp != NULL){
-			allocate_block(_size, tmp); 
-			ptr = tmp->ptr_block;
+		if(tmp2 != NULL){
+			ptr = tmp2->ptr_block;
+			allocate_block(tmp2, _size); 
 		}
-		else{
-			ptr = NULL;
-		}
-	} */
+	} 
 	
 	
-
     return ptr;
 }
 
