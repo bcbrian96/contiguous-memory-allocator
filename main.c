@@ -10,6 +10,7 @@ int main(int argc, char* argv[]) {
     int* p[50] = {NULL};
     for(int i=0; i<10; ++i) {
         p[i] = kalloc(sizeof(int));
+		 //p[i] = kalloc(i);
         if(p[i] == NULL) {
             printf("Allocation failed\n");
             continue;
@@ -19,8 +20,7 @@ int main(int argc, char* argv[]) {
     }
 	
 	print_memory();
-	
-    //print_statistics();
+    print_statistics();
 
     /* for(int i=0; i<10; ++i) {
         if(i%2 == 0)
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
         p[i] = NULL;
     } */
 	
-	for(int i=0; i<3; ++i) {
+	for(int i=4; i>0; --i) {
 
         printf("Freeing p[%d]\n", i);
         kfree(p[i]);
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     
 	print_memory();
 	
-	//print_statistics();
+	print_statistics();
     printf("available_memory %d\n", available_memory());
 
 	
@@ -58,15 +58,15 @@ int main(int argc, char* argv[]) {
     void* after[100] = {NULL};
     compact_allocation(before, after);
 	printf("FINISHED COMPACTION\n");
+	
 	print_memory();
-
-    //print_statistics(); 
+    print_statistics(); 
 
     // You can assume that the destroy_allocator will always be the 
     // last funciton call of main function to avoid memory leak 
     // before exit
 
-    //destroy_allocator();
+    destroy_allocator();
 
     return 0;
 }

@@ -162,6 +162,7 @@ void kfree(void* _ptr) {
 	struct nodeStruct* cur = kallocator.free_blocks;
 	while(cur != NULL){
 		if( (cur->ptr_block + cur->size) == newNode->ptr_block ){
+			
 			replaceNode = List_createNode(cur->ptr_block, cur->size + newNode->size);
 			printf("NEW SIZE: %d\n", replaceNode->size);
 			printf("NEW POINTER: %p\n", replaceNode->ptr_block);
@@ -172,6 +173,17 @@ void kfree(void* _ptr) {
 			
 		}
 		//backwards compatibility???
+		
+		if( (newNode->ptr_block + newNode->size) == cur->ptr_block){
+			
+			replaceNode = List_createNode(newNode->ptr_block, cur->size + newNode->size);
+			printf("NEW SIZE: %d\n", replaceNode->size);
+			printf("NEW POINTER: %p\n", replaceNode->ptr_block);
+			
+			List_deleteNode(&kallocator.free_blocks, cur);
+			List_deleteNode(&kallocator.free_blocks, newNode);
+			List_insertTail(&kallocator.free_blocks, replaceNode);
+		}
 		
 		cur = cur->next;
 	}
@@ -266,7 +278,7 @@ void print_statistics() {
 	struct nodeStruct* cur = kallocator.allocated_blocks;
 	while(cur != NULL){
 		allocated_size = allocated_size + cur->size;
-		++allocated_chunks;
+		allocated_chunks++;
 		cur = cur->next;
 	}
 	
@@ -276,7 +288,7 @@ void print_statistics() {
 	largest_free_chunk_size = cur_free->size;
 	
 	while(cur_free != NULL){
-		++free_chunks;
+		free_chunks++;
 		
 		if(cur_free->size < smallest_free_chunk_size){
 			smallest_free_chunk_size = cur_free->size;
