@@ -82,7 +82,7 @@ void* kalloc(int _size) {
 		}
 	}
 	
-	 else if(kallocator.aalgorithm == BEST_FIT){ //Keeping the free list sorted can speed up the process of finding the right hole?
+	 else if(kallocator.aalgorithm == BEST_FIT){ 
 		
 		cur = kallocator.free_blocks;
 		int remainder = 0;
@@ -273,6 +273,7 @@ void print_memory(){
 	List_print(&kallocator.allocated_blocks);
 	printf("\n PRINTING free blocks LL:\n");
 	List_print(&kallocator.free_blocks);
+	printf("test");
 }
 
 
