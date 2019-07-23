@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
         p[i] = NULL;
     } */
 	
-	for(int i=4; i>0; --i) {
+	for(int i=0; i<4; ++i) {
 
         printf("Freeing p[%d]\n", i);
         kfree(p[i]);

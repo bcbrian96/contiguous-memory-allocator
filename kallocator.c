@@ -192,7 +192,7 @@ void kfree(void* _ptr) {
 	
 }
 
-int compact_allocation(void** _before, void** _after) {
+/* int compact_allocation(void** _before, void** _after) {
     int compacted_size = 0;
 
     // compact allocated memory
@@ -231,28 +231,55 @@ int compact_allocation(void** _before, void** _after) {
 	List_insertHead(&kallocator.free_blocks, newNode);
 	
     return compacted_size;
-}
+} */
 
-/* int compact_allocation(void** _before, void** _after) {
+ void fix_contiguous(){
+	List_sort(&kallocator.free_blocks);
+	struct nodeStruct* cur = kallocator.free_blocks;
+	while(cur != NULL){
+		if(cur->next != NULL){
+			if( (cur->ptr_block + cur->size) == cur->next->ptr_block ){
+				cur->size = cur->size + cur->next->size;
+				List_deleteNode(&kallocator.free_blocks, cur->next);
+			}
+		}
+		cur = cur->next;
+	}
+} 
+
+
+int compact_allocation(void** _before, void** _after) {
 	
 	int compacted_size = 0;
 	
-	struct nodeStruct* cur = kallocator.allocated_blocks;
-	struct nodeStruct* cur_free = kallocator.free_blocks;
+	// compact allocated memory
+    // update _before, _after and compacted_size
+	List_sort(&kallocator.allocated_blocks);
+	
+	//struct nodeStruct* cur = kallocator.allocated_blocks;
+	//struct nodeStruct* cur_free = kallocator.free_blocks;
 	int i = 0;
 	
-	for(cur_free; cur_free != NULL; cur_free = cur_free->next){
-		for(cur; cur != NULL; cur = cur->next){
-			if(cur->ptr_block > cur_free->ptr_block){
+	for(struct nodeStruct* cur_free = kallocator.free_blocks; cur_free != NULL; cur_free = cur_free->next){
+		for(struct nodeStruct* cur = kallocator.allocated_blocks; cur != NULL; cur = cur->next){
+			if(cur->ptr_block >= cur_free->ptr_block){
 				
 				_before[i] = cur->ptr_block;
 				memmove(cur_free->ptr_block, cur->ptr_block, cur->size);
 				cur_free->ptr_block = cur_free->ptr_block + cur->size;
-				cur->size = cur->size - cur_free->size;
+				cur->ptr_block = cur->ptr_block - cur_free->size;
+				
+				fix_contiguous();
+				_after[i] = cur->ptr_block;
+				
+				i++;
+				compacted_size++;
 			}
+				
+		}
 	}
-	
-} */
+	return compacted_size;
+}
 
 int available_memory() {
     int available_memory_size = 0;
