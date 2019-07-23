@@ -137,6 +137,23 @@ void* kalloc(int _size) {
     return ptr;
 }
 
+ void fix_contiguous(){
+	
+	struct nodeStruct* cur = kallocator.free_blocks;
+	while(cur != NULL){
+		if(cur->next != NULL){
+			if( (cur->ptr_block + cur->size) == cur->next->ptr_block ){
+				cur->size = cur->size + cur->next->size;
+				List_deleteNode(&kallocator.free_blocks, cur->next);
+			}
+			else if( (cur->next->ptr_block + cur->next->size) == cur->ptr_block){
+					cur->next->size = cur->size + cur->next->size;
+					List_deleteNode(&kallocator.free_blocks, cur);
+			}
+		}
+		cur = cur->next;
+	}
+} 
 
 void kfree(void* _ptr) {
     assert(_ptr != NULL);
@@ -159,37 +176,8 @@ void kfree(void* _ptr) {
 	}
 	
 	//fix contiguous free_blocks (&kallocator.free_blocks, newNode);
-	struct nodeStruct* cur = kallocator.free_blocks;
-	while(cur != NULL){
-		if( (cur->ptr_block + cur->size) == newNode->ptr_block ){
-			
-			replaceNode = List_createNode(cur->ptr_block, cur->size + newNode->size);
-			printf("NEW SIZE: %d\n", replaceNode->size);
-			printf("NEW POINTER: %p\n", replaceNode->ptr_block);
-			
-			List_deleteNode(&kallocator.free_blocks, cur);
-			List_deleteNode(&kallocator.free_blocks, newNode);
-			List_insertTail(&kallocator.free_blocks, replaceNode);
-			
-		}
-		//backwards compatibility???
-		
-		if( (newNode->ptr_block + newNode->size) == cur->ptr_block){
-			
-			replaceNode = List_createNode(newNode->ptr_block, cur->size + newNode->size);
-			printf("NEW SIZE: %d\n", replaceNode->size);
-			printf("NEW POINTER: %p\n", replaceNode->ptr_block);
-			
-			List_deleteNode(&kallocator.free_blocks, cur);
-			List_deleteNode(&kallocator.free_blocks, newNode);
-			List_insertTail(&kallocator.free_blocks, replaceNode);
-		}
-		
-		cur = cur->next;
-	}
-	
-	
-	
+	fix_contiguous();
+
 }
 
 /* int compact_allocation(void** _before, void** _after) {
@@ -233,19 +221,7 @@ void kfree(void* _ptr) {
     return compacted_size;
 } */
 
- void fix_contiguous(){
-	List_sort(&kallocator.free_blocks);
-	struct nodeStruct* cur = kallocator.free_blocks;
-	while(cur != NULL){
-		if(cur->next != NULL){
-			if( (cur->ptr_block + cur->size) == cur->next->ptr_block ){
-				cur->size = cur->size + cur->next->size;
-				List_deleteNode(&kallocator.free_blocks, cur->next);
-			}
-		}
-		cur = cur->next;
-	}
-} 
+
 
 
 int compact_allocation(void** _before, void** _after) {
@@ -255,17 +231,17 @@ int compact_allocation(void** _before, void** _after) {
 	// compact allocated memory
     // update _before, _after and compacted_size
 	List_sort(&kallocator.allocated_blocks);
-	
-	//struct nodeStruct* cur = kallocator.allocated_blocks;
-	//struct nodeStruct* cur_free = kallocator.free_blocks;
+
 	int i = 0;
 	
-	for(struct nodeStruct* cur_free = kallocator.free_blocks; cur_free != NULL; cur_free = cur_free->next){
-		for(struct nodeStruct* cur = kallocator.allocated_blocks; cur != NULL; cur = cur->next){
+	struct nodeStruct* cur_free = kallocator.free_blocks;
+	while(cur_free != NULL){
+		struct nodeStruct* cur = kallocator.allocated_blocks;
+		while(cur != NULL){
 			if(cur->ptr_block >= cur_free->ptr_block){
 				
 				_before[i] = cur->ptr_block;
-				memmove(cur_free->ptr_block, cur->ptr_block, cur->size);
+				memcpy(cur_free->ptr_block, cur->ptr_block, cur->size);
 				cur_free->ptr_block = cur_free->ptr_block + cur->size;
 				cur->ptr_block = cur->ptr_block - cur_free->size;
 				
@@ -275,10 +251,12 @@ int compact_allocation(void** _before, void** _after) {
 				i++;
 				compacted_size++;
 			}
-				
+			cur = cur->next;
 		}
+		cur_free = cur_free->next;
 	}
 	return compacted_size;
+
 }
 
 int available_memory() {

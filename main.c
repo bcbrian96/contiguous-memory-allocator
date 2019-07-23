@@ -22,21 +22,21 @@ int main(int argc, char* argv[]) {
 	print_memory();
     print_statistics();
 
-    /* for(int i=0; i<10; ++i) {
+    /*  for(int i=0; i<10; ++i) {
         if(i%2 == 0)
             continue;
 
         printf("Freeing p[%d]\n", i);
         kfree(p[i]);
         p[i] = NULL;
-    } */
+    }  */
 	
-	for(int i=0; i<4; ++i) {
+	 for(int i=0; i<4; ++i) {
 
         printf("Freeing p[%d]\n", i);
         kfree(p[i]);
         p[i] = NULL;
-    }
+    } 
 	
 		/* int i = 9;
         printf("Freeing p[%d]\n", i);
