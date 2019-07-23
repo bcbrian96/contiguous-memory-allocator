@@ -62,7 +62,7 @@ void allocate_block(struct nodeStruct* node, int size){
 
 void* kalloc(int _size) {
     void* ptr = NULL;
-	struct nodeStruct* cur = NULL;
+    struct nodeStruct* cur = NULL;
     // Allocate memory from kallocator.memory 
     // ptr = address of allocated memory
 	
@@ -159,9 +159,8 @@ void kfree(void* _ptr) {
     assert(_ptr != NULL);
 
 	struct nodeStruct* newNode = NULL;
-	struct nodeStruct* replaceNode = NULL;
 	
-    printf("Attempting to find pointer %p: \n", _ptr);
+        printf("Attempting to find pointer %p: \n", _ptr);
 	struct nodeStruct* targetNode = List_findNode(kallocator.allocated_blocks, _ptr);
 	
 	if(targetNode != NULL) {
@@ -178,50 +177,6 @@ void kfree(void* _ptr) {
 	//fix contiguous free_blocks (&kallocator.free_blocks, newNode);
 	fix_contiguous();
 }
-
-/* int compact_allocation(void** _before, void** _after) {
-    int compacted_size = 0;
-
-    // compact allocated memory
-    // update _before, _after and compacted_size
-	List_sort(&kallocator.allocated_blocks);
-	
-	struct nodeStruct* cur = kallocator.allocated_blocks;
-	void *address = kallocator.memory;
-	int size_cpy = 0;
-	void *ptr_cpy = NULL;
-	int i = 0;
-	int total_size = 0;
-	
-	while(cur != NULL){
-		
-		size_cpy = cur->size;
-		ptr_cpy = cur->ptr_block;
-		
-		_before[i] = ptr_cpy;
-		_after[i] = memcpy(address, ptr_cpy, (size_t)size_cpy);
-		
-		cur->ptr_block = _after[i];
-		
-		address = address + size_cpy;
-		cur = cur->next;
-		i++;
-		compacted_size++;
-	}
-	
-	while(kallocator.free_blocks != NULL){	
-		total_size = total_size + kallocator.free_blocks->size;
-		List_deleteNode(&kallocator.free_blocks, kallocator.free_blocks);
-	}
-	
-	struct nodeStruct* newNode = List_createNode(address, total_size);
-	List_insertHead(&kallocator.free_blocks, newNode);
-	
-    return compacted_size;
-} */
-
-
-
 
 int compact_allocation(void** _before, void** _after) {
 	
@@ -288,8 +243,8 @@ void print_statistics() {
 	
 	free_size = available_memory();
 	struct nodeStruct* cur_free = kallocator.free_blocks;
-	smallest_free_chunk_size = cur_free->size;
-	largest_free_chunk_size = cur_free->size;
+	//smallest_free_chunk_size = cur_free->size;
+	//largest_free_chunk_size = cur_free->size;
 	
 	while(cur_free != NULL){
 		free_chunks++;
