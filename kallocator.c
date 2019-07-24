@@ -160,18 +160,14 @@ void kfree(void* _ptr) {
 
 	struct nodeStruct* newNode = NULL;
 	
-    printf("Attempting to find pointer %p: \n", _ptr);
 	struct nodeStruct* targetNode = List_findNode(kallocator.allocated_blocks, _ptr);
 	
 	if(targetNode != NULL) {
-		printf("FOUND pointer %p and size %d\n", _ptr, targetNode->size);
+		//printf("FOUND pointer %p and size %d\n", _ptr, targetNode->size);
 		newNode = List_createNode(_ptr, targetNode->size);
 		List_insertTail(&kallocator.free_blocks, newNode);
 		
 		List_deleteNode(&kallocator.allocated_blocks, targetNode);
-	}
-	else{
-		printf("I cannot find\n");
 	}
 
 	fix_contiguous();
@@ -183,7 +179,7 @@ int compact_allocation(void** _before, void** _after) {
 	int compacted_size = 0;
 	
 	// compact allocated memory
-    // update _before, _after and compacted_size
+    	// update _before, _after and compacted_size
 	List_sort(&kallocator.allocated_blocks);
 
 	int i = 0;
@@ -268,13 +264,14 @@ void print_statistics() {
 	
 }
 
+/*
 void print_memory(){
 	printf("\n PRINTING allocated blocks LL:\n");
 	List_print(&kallocator.allocated_blocks);
 	printf("\n PRINTING free blocks LL:\n");
 	List_print(&kallocator.free_blocks);
 }
-
+*/
 
 
 

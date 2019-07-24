@@ -6,7 +6,7 @@
 
 static _Bool doSinglePassOnSort(struct nodeStruct **headRef);
 static void swapElements(struct nodeStruct **previous, struct nodeStruct *nodeA, struct nodeStruct *b);
-void List_print(struct nodeStruct **headRef);
+//void List_print(struct nodeStruct **headRef);
 
 /*
  * Allocate memory for a node of type struct nodeStruct and initialize
@@ -157,6 +157,7 @@ static void swapElements(struct nodeStruct **previous,
 	nodeB->next = nodeA;
 }
 
+/*
 void List_print(struct nodeStruct **headRef)
 {
 	struct nodeStruct *cur = *headRef;
@@ -168,4 +169,4 @@ void List_print(struct nodeStruct **headRef)
 	printf("\n");
 
 }
-
+*/
