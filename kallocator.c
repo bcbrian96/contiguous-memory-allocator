@@ -67,7 +67,7 @@ void* kalloc(int _size) {
     // ptr = address of allocated memory
 	
 	if(kallocator.aalgorithm == FIRST_FIT){
-		cur = kallocator.free_blocks; //reference to head
+		cur = kallocator.free_blocks; 
 		
 		while(cur != NULL){
 			if(cur->size >= _size){
@@ -132,14 +132,14 @@ void* kalloc(int _size) {
 			allocate_block(tmp2, _size); 
 		}
 	} 
-	
-	
+		
     return ptr;
 }
 
  void fix_contiguous(){
-	
+	List_sort(&kallocator.free_blocks);	
 	struct nodeStruct* cur = kallocator.free_blocks;
+
 	while(cur != NULL){
 		if(cur->next != NULL){
 			if( (cur->ptr_block + cur->size) == cur->next->ptr_block ){
@@ -273,7 +273,6 @@ void print_memory(){
 	List_print(&kallocator.allocated_blocks);
 	printf("\n PRINTING free blocks LL:\n");
 	List_print(&kallocator.free_blocks);
-	printf("test");
 }
 
 
